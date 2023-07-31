@@ -1,0 +1,40 @@
+use sakila;
+-- =======================================================================================================================================================
+-- TASK-1:- Identify and display the film/movie id and existing number of copies of movies 1.Brotherhood blanket 2.soup wisdom
+-- =======================================================================================================================================================
+select f.film_id,f.title, count(inventory_id) as total_copies 
+from film f join inventory i using (film_id) 
+where title in ('brotherhood blanket','soup wisdom') 
+group by film_id; 
+-- =======================================================================================================================================================
+-- TASK-2:- calaculate and display the total number of movies in each genre
+-- =======================================================================================================================================================
+select c.name, count(film_id)as total_movies 
+from film join film_category using (film_id) 
+join category c using (category_id) 
+group by category_id;
+-- =======================================================================================================================================================
+-- TASK-3:- Display the first name and last name of the top 3 actors whose movie have the highest replacement cost
+-- =======================================================================================================================================================
+select a.first_name, a.last_name from actor a 
+inner join film_actor fa on a.actor_id=fa.actor_id 
+inner join film f on fa.film_id=f.film_id 
+order by f.replacement_cost desc limit 3;
+-- =======================================================================================================================================================
+-- TASK-4:- Movies can be based on actual incidents, political issues,mystery, fiction calculate and display total sales for each type of movie
+-- =======================================================================================================================================================
+select c.name, sum(amount) as total_sales from category c 
+inner join film_category fc using (category_id) 
+inner join inventory i using (film_id) 
+inner join rental r using (inventory_id)
+inner join payment p using (rental_id) 
+group by c.name;
+-- =======================================================================================================================================================
+-- TASK-5:- Display the top 10 genre of movies based on their revenue sorted in descending order save the CSV file and visualize using bar graph & pie chart
+-- =======================================================================================================================================================
+select c.name, sum(amount) as total_sales from category c 
+inner join film_category fc using (category_id) 
+inner join inventory i using (film_id) 
+inner join rental r using (inventory_id)
+inner join payment p using (rental_id) 
+group by c.name order by total_sales desc limit 10;
