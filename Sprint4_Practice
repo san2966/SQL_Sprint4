@@ -1,0 +1,55 @@
+use hr;
+-- =======================================================================================================================================================
+-- Task-1:- Display the employee id, first_name,last_name, and department names of all employees using subquery.
+-- =======================================================================================================================================================
+select employee_id, first_name, last_name,
+(select department_name from departments where employees.department_id=departments.department_id)
+as dept_name from employees;
+-- =======================================================================================================================================================
+-- TASK-2 Display the firstname, lastname, and salaries of employees whose salaries are greater than the average salary of all employees group by dept_id
+-- =======================================================================================================================================================
+select avg(salary) from employees;
+select first_name, last_name, salary from employees where salary > all (select avg(salary) from employees); 
+-- =======================================================================================================================================================
+-- TASK-3:- Display the firstname and lastname of those employees of sales whoe salary is less than average of all employees of sales
+-- =======================================================================================================================================================
+select e.first_name, e.last_name from employees e
+where salary < (select avg(salary) from employees 
+where (select department_name from departments d where d.department_id=e.department_id having department_name='sales'));
+-- =======================================================================================================================================================
+-- TASK-4:- Display firstname, lastname and salaries of employees who have a salary higher than salary of all IT Programmer use ascending order of salary
+-- =======================================================================================================================================================
+select first_name, last_name, salary from employees 
+where salary > all (select salary from employees where job_id='it_prog')
+order by salary asc;
+-- =======================================================================================================================================================
+-- Task-5:- Display the records of the employee with the minimum salary in th employee table group by job_id arrange in ascending order
+-- =======================================================================================================================================================
+select first_name, last_name, e.job_id,e.salary from employees e 
+where e.salary in 
+(select min(salary) from employees e group by job_id)
+order by e.salary asc;
+-- =======================================================================================================================================================
+-- Task-6:- Display the firstname, lastname, department id of employee whose salary is greater than 60% of sum of salaries of all employees of their dept.
+-- =======================================================================================================================================================
+select department_id,(sum(salary)*.6)as 60_percent from employees group by department_id;
+select e.first_name, e.last_name, e.department_id from employees e 
+where e.salary > (select 0.6*sum(salary) from employees  where department_id=e.department_id);
+-- =======================================================================================================================================================
+-- TASK-7:- Display the firstname, and lastname of all those employees who have their managers based out of UK, using subquery
+-- =======================================================================================================================================================
+select first_name, last_name from employees where manager_id in 
+(select employee_id from employees where department_id in
+(select department_id from departments where location_id in
+(select location_id from locations where country_id='UK')));
+-- =======================================================================================================================================================
+-- Display the firstnmae, lastname, and salary of top 5 highest paid employees and export the output as CSV file
+-- =======================================================================================================================================================
+select first_name, last_name, salary from employees order by salary desc limit 5;
+
+
+
+
+
+
+
