@@ -1,0 +1,27 @@
+use world;
+-- =======================================================================================================================================================
+-- TASK-1:- Display all rows fromthe country table and calculate the number of rows in table.
+-- Display the country names and the population of countries with the codes (USA,GBR,ARE)
+-- =======================================================================================================================================================
+select name,population ,
+(select count(*)from country)as total_count 
+from country c where c.code in ('USA','GBR','ARE');
+-- =======================================================================================================================================================
+-- TASK-2:- Display the continent names and the sum of population of all countries in the continents in descending order.
+-- =======================================================================================================================================================
+select continent,(select sum(population) from country 
+where continent=c.continent)as total_population from
+ (select continent from country group by continent)as c 
+ order by total_population desc;
+ -- =======================================================================================================================================================
+-- TASK-3:- Display the names of those countries of the european continent where the language spoken is french
+-- =======================================================================================================================================================
+select name from country where exists(select countrycode from countrylanguage where language='french');
+select c.name from country c join countrylanguage cl on c.code=cl.countrycode where cl.language='french';
+-- =======================================================================================================================================================
+-- TASK-4:- Dispaly the name of the country with highest population from each continent in database
+-- =======================================================================================================================================================
+select c.continent, c.name, c.population from country c
+ where c.population = (select max(co.population) 
+ from country co where co.continent=c.continent);
+ 
